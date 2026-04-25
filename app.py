@@ -53,29 +53,8 @@ def load_league_data(league_code):
     try:
         df = pd.read_csv(data_path)
         
-        # Standardize column names - strip whitespace
+        # Standardize column names
         df.columns = df.columns.str.strip()
-        
-        # Rename columns to match expected format
-        column_mapping = {
-            'runs_off_bat': 'runs_offbat',
-            'team1_batting_first': 'team1_battingfirst',
-            'team2_batting_second': 'team2_battingsecond'
-        }
-        
-        for old_col, new_col in column_mapping.items():
-            if old_col in df.columns:
-                df.rename(columns={old_col: new_col}, inplace=True)
-        
-        # Standardize pace_or_spin values to lowercase
-        if 'pace_or_spin' in df.columns:
-            df['pace_or_spin'] = df['pace_or_spin'].str.lower()
-        
-        # Standardize bowling_hand and batting_hand to title case
-        if 'bowling_hand' in df.columns:
-            df['bowling_hand'] = df['bowling_hand'].str.title()
-        if 'batting_hand' in df.columns:
-            df['batting_hand'] = df['batting_hand'].str.title()
         
         # Convert boolean columns
         bool_columns = ['is_wicket', 'is_boundary']
@@ -93,7 +72,7 @@ def load_league_data(league_code):
                 df[col] = df[col].fillna('')
         
         # Convert numeric columns
-        numeric_cols = ['runs_offbat', 'extras', 'match_no', 'innings', 'over', 'ball']
+        numeric_cols = ['runs_off_bat', 'extras', 'match_no', 'innings', 'over', 'ball']
         for col in numeric_cols:
             if col in df.columns:
                 df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0).astype(int)
@@ -102,8 +81,6 @@ def load_league_data(league_code):
     
     except Exception as e:
         st.error(f"Error loading data: {str(e)}")
-        import traceback
-        st.error(traceback.format_exc())
         return None
 
 def main():
